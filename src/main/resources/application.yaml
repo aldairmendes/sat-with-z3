@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: sat-with-z3
+  ai:
+    google:
+      genai:
+        api-key: ${GEMINI_API_KEY}
+        chat:
+          options:
+            model: gemini-3.1-flash-lite
+            temperature: 0.0
+
+kind: Application
