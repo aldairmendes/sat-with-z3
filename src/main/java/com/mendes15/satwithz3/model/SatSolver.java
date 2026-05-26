@@ -17,30 +17,10 @@ public class SatSolver {
     public ArrayNode solve(JsonNode statements) {
         try (Context ctx = new Context()) {
             Solver solver = ctx.mkSolver();
-            int n = statements.size();
-
-            BoolExpr[] inhabitants = new BoolExpr[n];
-            for (int i = 0; i < n; i++) {
-                inhabitants[i] = ctx.mkBoolConst("H" + i);
-            }
-
-            for (int i = 0; i < n; i++) {
-                BoolExpr fala = parseExpression(ctx, inhabitants, statements.get(i));
-                if (fala == null) {
-                    System.err.println("[ERRO Z3] Expressão nula gerada para o habitante H" + i);
-                    return null;
-                }
-                solver.add(ctx.mkEq(inhabitants[i], fala));
-            }
 
             if (solver.check() == Status.SATISFIABLE) {
-                Model model = solver.getModel();
-                ArrayNode result = mapper.createArrayNode();
 
-                for (int i = 0; i < n; i++) {
-                    result.add(model.evaluate(inhabitants[i], false).isTrue());
-                }
-                return result;
+                return mapper.createArrayNode();
             } else {
                 System.err.println("[Z3 Status] UNSATISFIABLE - Não há solução lógica consistente.");
             }

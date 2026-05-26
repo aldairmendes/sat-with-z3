@@ -56,7 +56,11 @@ Após extrair o arquivo baixado em um local definitivo do seu computador (ex: `C
 ## 🚀 Como Iniciar a Aplicação
 
 ### Pré-requisitos
-* Certifique-se de que sua API Key do Gemini está configurada adequadamente nas propriedades do Spring (`application.yaml`).
+* Certifique-se de que sua API Key do Gemini está configurada adequadamente nas propriedades do Spring (`application.yaml`) ou execute o seguinte comando:
+* no Linux / macOS / Git Bash:
+  `echo "GEMINI_API_KEY=<sua_chave_aqui>" >> .env`
+* no Windows:
+  `Add-Content -Path .env -Value "GEMINI_API_KEY=<sua_chave_aqui>"`
 * Os arquivos `.jsonl` devem estar localizados no diretório: `src/main/resources/data/`.
 
 ### Opção 1: Executando com o Maven (Modo Desenvolvimento)
@@ -65,3 +69,4 @@ A forma mais prática de rodar durante o desenvolvimento, permitindo que o Maven
 ```bash
 # Substitua o número "2" pela quantidade de pessoas desejada (2 a 8)
 mvn spring-boot:run -Dspring-boot.run.arguments="2"
+```
