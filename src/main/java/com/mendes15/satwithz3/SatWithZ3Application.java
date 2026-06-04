@@ -23,15 +23,33 @@ public class SatWithZ3Application {
     public CommandLineRunner clr(FileService fileService) {
         return args -> {
             if (args.length < 1) {
-                System.out.println("\n[ERRO] Uso correto: mvn spring-boot:run -Dspring-boot.run.arguments=\"<numero_de_pessoas>\"");
-                System.out.println("Exemplo: mvn spring-boot:run -Dspring-boot.run.arguments=\"3\"\n");
+                System.out.println("\n[ERRO] Uso correto: mvn spring-boot:run -Dspring-boot.run.arguments=\"<numero_de_pessoas> [modo]\"");
+                System.out.println("Exemplo Modo Lote:       mvn spring-boot:run -Dspring-boot.run.arguments=\"2\"");
+                System.out.println("Exemplo Modo Validação:  mvn spring-boot:run -Dspring-boot.run.arguments=\"2 -validation\"");
+                System.out.println("Exemplo Modo Unitário:   mvn spring-boot:run -Dspring-boot.run.arguments=\"2 -unit\"\n");
                 return;
             }
 
             try {
                 int numPeople = Integer.parseInt(args[0]);
 
-                fileService.avaliarDesempenho(numPeople);
+                String flag = (args.length > 1) ? args[1].toLowerCase() : "";
+
+                switch (flag) {
+                    case "-validation" -> {
+                        System.out.println("[MODO] Iniciando modo validação: LLM -> Z3 -> LLM (Pessoas: " + numPeople + ")");
+                        fileService.avaliarDesempenhoComValidacaoLLM(numPeople);
+                    }
+                    case "-unit" -> {
+                        System.out.println("[MODO] Iniciando modo execução unitária: LLM Solo (Pessoas: " + numPeople + ")");
+                        fileService.executarModoUnitarioPuro(numPeople);
+                    }
+                    default -> {
+                        System.out.println("[MODO] Iniciando modo normal em lote (Pessoas: " + numPeople + ")");
+                        fileService.avaliarDesempenho(numPeople);
+                    }
+                }
+
                 System.exit(0);
             } catch (NumberFormatException e) {
                 System.err.println("[ERRO] O argumento '" + args[0] + "' não é um número válido.");

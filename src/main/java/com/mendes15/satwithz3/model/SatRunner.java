@@ -2,9 +2,11 @@ package com.mendes15.satwithz3.model;
 
 import com.mendes15.satwithz3.service.FileService;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("!test")
 public class SatRunner implements CommandLineRunner {
 
     private final FileService fileService;

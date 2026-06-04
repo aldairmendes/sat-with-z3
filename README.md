@@ -19,7 +19,7 @@ O sistema envia os enigmas para o **Gemini**, enquanto resolve as mesmas restri�
 ## 🧩 Arquitetura do Fluxo de Avaliação
 
 1. **Leitura Dinâmica:** O sistema lê arquivos como `people2_num100.jsonl` contendo 100 problemas estruturados.
-2. **Batch Prompting:** Monta um lote com os textos dos quizes e instrui o Gemini a responder em formato de linhas restritas (ex: `t,f`).
+2. **Batch Prompting:** Monta um lote com os textos dos quizes (modo normal) ou envia os problemas individualmente (modos unitário e validação) e instrui o Gemini a responder em formato de linhas restritas (ex: `t,f`).
 3. **Resolução Simbólica:** O `SatSolver` analisa a árvore lógica abstrata (`statements`) contida no JSONL e instancia variáveis booleanas sequenciais ($H_0, H_1, \dots, H_n$) no núcleo C++ do Z3 para deduzir a única resposta matematicamente válida.
 4. **Validação Cruzada:** O sistema compara o caractere de cada linha da IA com o booleano gerado pelo Z3, evitando deslocamentos globais de strings.
 
@@ -63,10 +63,24 @@ Após extrair o arquivo baixado em um local definitivo do seu computador (ex: `C
   `Add-Content -Path .env -Value "GEMINI_API_KEY=<sua_chave_aqui>"`
 * Os arquivos `.jsonl` devem estar localizados no diretório: `src/main/resources/data/`.
 
-### Opção 1: Executando com o Maven (Modo Desenvolvimento)
-A forma mais prática de rodar durante o desenvolvimento, permitindo que o Maven gerencie o contexto nativo do Z3 automaticamente:
+### Opção 1: Executando com o Maven (Modo Normal)
+O modo mais simples onde a llm recebe todos os problemas de uma vez em um único prompt.
 
 ```bash
 # Substitua o número "2" pela quantidade de pessoas desejada (2 a 8)
 mvn spring-boot:run -Dspring-boot.run.arguments="2"
+```
+### Opção 2: Executando com o Maven (Modo Unitário)
+Nesse modo, os problemas são enviados para a llm um de cada vez.
+
+```bash
+# Substitua o número "2" pela quantidade de pessoas desejada (2 a 8)
+mvn spring-boot:run -Dspring-boot.run.arguments="2 -unit"
+```
+### Opção 3: Executando com o Maven (Modo Validação)
+Nesse modo, os problemas são enviados para a llm um de cada vez e ela responde com uma expressão que o solver Z3 entende, então, o Z3 devolve a valoração que resolve a expressão e essa resposta é devolvida com histórico para a llm, a llm então terá que decidir se vai responder com o que o solver mandou, ou não.
+
+```bash
+# Substitua o número "2" pela quantidade de pessoas desejada (2 a 8)
+mvn spring-boot:run -Dspring-boot.run.arguments="2 -validation"
 ```
